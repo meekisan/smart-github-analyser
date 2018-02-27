@@ -1,0 +1,8 @@
+version: "3"
+services:
+  dataStorage:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ../data:/tmp/data
