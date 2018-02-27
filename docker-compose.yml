@@ -2,8 +2,8 @@ version: "3"
 services:
   githubarchive:
     build:
-      context: .
-      dockerfile: ./githubArchive/Dockerfile
+      context: githubArchive/
+      dockerfile: Dockerfile
   #commitsimulator:
   #   build:
   #     context: .
@@ -16,6 +16,12 @@ services:
       - ../data:/tmp/data
   broker:
     image: rabbitmq:3
+  brokermanage:
+    build:
+      context: rabbitManagement/
+      dockerfile: Dockerfile
+    ports:
+      - 8888:15672
   search:
     image: elasticsearch
     ports:
