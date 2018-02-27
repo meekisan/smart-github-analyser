@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Feb 20 16:27:47 2018
@@ -11,6 +12,15 @@ import argparse
 from datetime import datetime 
 from datetime import timedelta
 import calendar
+import pika
+
+
+
+
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+channel = connection.channel()
+
+channel.queue_declare(queue='archive')
 """
 """
 def definePath(path, date):
@@ -76,9 +86,18 @@ def importer(workingList):
 			compressedFile.seek(0)
 			pathBuilder(dico["outPath"])
 			decompressedFile = gzip.GzipFile(fileobj=compressedFile, mode='rb')
-			print("writing file on "+dico["outPathFile"])
-			with open(dico["outPathFile"], 'wb') as outfile:
-				outfile.write(decompressedFile.read())
+			line = decompressedFile.readline()
+			while(line):
+				channel.basic_publish(exchange='github_archive',routing_key='*,*',body= line)
+				line = decompressedFile.readLine()
+			#print("writing file on "+dico["outPathFile"])
+			#with open(dico["outPathFile"], 'wb') as outfile:
+			#	line = decompressedFile.readline()
+			#	channel.basic_publish(exchange='github_archive',
+                      	#				routing_key='*',
+                      	#				body= line)	
+				#outfile.write(line)
+				#exit
 
 workingList = init()
 importer(workingList)
