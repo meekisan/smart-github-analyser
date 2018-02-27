@@ -1,4 +1,7 @@
 FROM ubuntu
 USER root
-RUN apt-get update -y
+COPY src /data
+WORKDIR /data 
+RUN apt-get update && apt-get install python3-pip -y
+RUN pip3 install celery
 CMD sleep infinity
