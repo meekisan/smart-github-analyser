@@ -90,3 +90,5 @@ ENV/
 .ropeproject
 #vim swp
 *.swp
+#neo4j
+database/*

@@ -14,9 +14,7 @@ services:
       - 27017:27017
     volumes:
       - ../data:/tmp/data
-  broker:
-    image: rabbitmq:3
-  brokermanage:
+  rabbitmq:
     build:
       context: rabbitManagement/
       dockerfile: Dockerfile
