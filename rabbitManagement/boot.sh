@@ -11,12 +11,12 @@ service rabbitmq-server start
 /usr/local/bin/rabbitmqadmin declare queue  name=commits durable=true 
 /usr/local/bin/rabbitmqadmin declare queue  name=files durable=true 
 
-# binding click
+# binding queue
 /usr/local/bin/rabbitmqadmin declare binding source=github_archive destination_type=queue destination=archives routing_key=*.* 
 /usr/local/bin/rabbitmqadmin declare binding source=simulator destination_type=queue destination=commits routing_key=commit.* 
 /usr/local/bin/rabbitmqadmin declare binding source=simulator destination_type=queue destination=files routing_key=file.* 
 
-#create user mobpartner
+#create user rabbit
 rabbitmqctl add_user rabbit m0bR4b1tt
 rabbitmqctl set_permissions -p / rabbit ".*" ".*" ".*"
 rabbitmqctl set_user_tags rabbit administrator
