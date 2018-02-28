@@ -4,10 +4,6 @@ services:
     build:
       context: githubArchive/
       dockerfile: Dockerfile
-  #commitsimulator:
-  #   build:
-  #     context: .
-  #     dockerfile: ./commitSimulator/Dockerfile
   datastorage:
     image: mongo
     ports:
@@ -27,7 +23,7 @@ services:
     tty: true
   kibana:
     image: kibana
-    ports: 
+    ports:
       - 5601:5601
   recommandation:
     build:
@@ -37,8 +33,16 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
-      - ./recommandation/data:/data 
+      - ./recommandation/data:/data
       - ./recommandation/plugins:/plugins
     tty: true
-   #prediction:
-   #  image: 
+  prediction:
+    build:
+      context: .
+      dockerfile: ./prediction/Dockerfile
+    ports:
+      - 8889:8889
+      - 4040:4040
+    volumes:
+      - ./prediction/data:/home/jovyan/data
+    tty: true
