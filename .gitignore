@@ -90,5 +90,10 @@ ENV/
 .ropeproject
 #vim swp
 *.swp
-#neo4j
+#storage all databases
 recommandation/data/*
+dbs/mongo/*
+dbs/esdata1/*
+dbs/neo4j/*
+#prediction data
+prediction/data/*

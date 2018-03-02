@@ -9,7 +9,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - $HOME/data/mongo/db:/data/db
+      - ./dbs/mongo/db:/data/db
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -22,7 +22,7 @@ services:
     ports:
       - 9200:9200
     volumes:
-      - $HOME/data/esdata1:/usr/share/elasticsearch/data
+      - ./dbs/esdata1:/usr/share/elasticsearch/data
     tty: true
   kibana:
     image: kibana
@@ -36,8 +36,8 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
-      - $HOME/data/neo4j/data:/data
-      - $HOME/data/neo4j/plugins:/plugins
+      - ./dbs/neo4j/data:/data
+      - ./dbs/neo4j/plugins:/plugins
     tty: true
   prediction:
     build:
