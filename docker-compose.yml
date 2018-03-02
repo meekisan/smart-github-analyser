@@ -9,17 +9,20 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ../data:/tmp/data
+      - $HOME/data/mongo/db:/data/db
   rabbitmq:
-    build:
-      context: rabbitManagement/
-      dockerfile: Dockerfile
+    image: rabbitmq:3-management
     ports:
-      - 8888:15672
+      - 15672:15672
+    volumes:
+      - ./rabbitManagement/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ./rabbitManagement/definitions.json:/etc/rabbitmq/definitions.json:ro
   search:
     image: elasticsearch
     ports:
       - 9200:9200
+    volumes:
+      - $HOME/data/esdata1:/usr/share/elasticsearch/data
     tty: true
   kibana:
     image: kibana
@@ -33,8 +36,8 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
-      - ./recommandation/data:/data
-      - ./recommandation/plugins:/plugins
+      - $HOME/data/neo4j/data:/data
+      - $HOME/data/neo4j/plugins:/plugins
     tty: true
   prediction:
     build:
