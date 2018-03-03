@@ -9,6 +9,7 @@ services:
     ports:
       - 27017:27017
     volumes:
+      -  ./share:/tmp/share
       - ./dbs/mongo/db:/data/db
   rabbitmq:
     image: rabbitmq:3-management

@@ -21,12 +21,10 @@ def rabbitMqInit():
 	try:
 		connection = pika.BlockingConnection(pika.ConnectionParameters(host=conf["rabbitMq"]["host"]))
 		channel = connection.channel()
-		#channel.queue_declare(queue=conf["rabbitMq"]["queue"])
 		return channel
 	except Exception as e:
 		print(e)
-"""
-"""
+
 def definePath(path, date):
 	tab = date.split("-")
 	return path+'/'.join(tab[0:3])
