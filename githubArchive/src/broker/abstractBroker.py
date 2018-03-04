@@ -9,5 +9,5 @@ class AbstractBroker(ABC):
     def publish(self):
         print("publish")
     @abstractmethod
-    def consumer(self):
+    def consume(self):
         print("consume")
