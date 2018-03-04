@@ -9,36 +9,38 @@ import io
 import urllib.request
 import gzip
 import argparse
-from datetime import datetime 
+import json
+from datetime import datetime
 from datetime import timedelta
 import calendar
 import pika
+from conf import conf
+from repository import repo_name
 
+def rabbitMqInit():
+	try:
+		connection = pika.BlockingConnection(pika.ConnectionParameters(host=conf["rabbitMq"]["host"]))
+		channel = connection.channel()
+		return channel
+	except Exception as e:
+		print(e)
 
-
-
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
-channel = connection.channel()
-
-channel.queue_declare(queue='archive')
-"""
-"""
 def definePath(path, date):
 	tab = date.split("-")
 	return path+'/'.join(tab[0:3])
-	
+
 
 def setCallURL(params):
 	listDate = {}
 	date = params.dateFormat
-	
+
 	if len(date.split("-")) == 2:
 		return dayImporter(params)
 	if len(date.split("-")) == 3:
 		return hourImporter(date, params)
-	return [{"filename":date+'.json' , "outPath": definePath(params.dest,params.dateFormat), 
+	return [{"filename":date+'.json' , "outPath": definePath(params.dest,params.dateFormat),
 		"url": params.url+date+'.json.gz', "outPathFile": definePath(params.dest,params.dateFormat)+"/"+date+".json"}]
-	
+
 
 def hourImporter(date, params, callURL=[]):
 	for hour in range(1,24):
@@ -48,7 +50,7 @@ def hourImporter(date, params, callURL=[]):
 		tmp["outPathFile"] = tmp["outPath"]+"/"+filename
 		tmp["filename"]=filename
 		tmp["url"]=params.url+filename+'.gz'
-		callURL.append(tmp)		
+		callURL.append(tmp)
 	return callURL
 
 def dayImporter(params):
@@ -56,7 +58,7 @@ def dayImporter(params):
 	splittedDate = params.dateFormat.split("-")
 	lastDay = calendar.monthrange(int(splittedDate[0]),int(splittedDate[1]))[1]
 	for day in range(1,lastDay):
-		d = str(day).zfill(2) 
+		d = str(day).zfill(2)
 		newDate = params.dateFormat+'-'+d
 		hourImporter(newDate, params, callUrl)
 	return callUrl
@@ -73,31 +75,42 @@ def init():
 	return params
 
 def pathBuilder(outFilePath):
-	 os.makedirs(outFilePath, exist_ok=True)
+	try:
+		os.makedirs(outFilePath, exist_ok=True)
+	except Exception as e:
+		print(e)
 
-def importer(workingList):
-	
+def uploadFile(url):
+	try:
+		return urllib.request.urlopen(url)
+	except Exception as e:
+		print(e)
+
+def decompressedFile(source):
+	try:
+		compressedFile = io.BytesIO()
+		compressedFile.write(source.read())
+		compressedFile.seek(0)
+		#pathBuilder(dico["outPath"])
+		return  gzip.GzipFile(fileobj=compressedFile, mode='rb')
+	except Exception as e:
+		print(e)
+
+def prossessing(channel, uncompressedFile):
+	line = str(uncompressedFile.readline(),'utf-8')
+	while(line):
+		jsonline = json.loads(line)
+		if jsonline['repo']['name'] in repo_name:
+			channel.basic_publish(exchange=conf["rabbitMq"]["exchange"],routing_key=conf["rabbitMq"]["routing_key"],body= line)
+		line = str(uncompressedFile.readline(),'utf-8')
+
+def importer(channel, workingList):
 	for elt in workingList:
 		for dico in elt:
 			print("uploading file on "+dico['url'])
-			response = urllib.request.urlopen(dico["url"])
-			compressedFile = io.BytesIO()
-			compressedFile.write(response.read())
-			compressedFile.seek(0)
-			pathBuilder(dico["outPath"])
-			decompressedFile = gzip.GzipFile(fileobj=compressedFile, mode='rb')
-			line = decompressedFile.readline()
-			while(line):
-				channel.basic_publish(exchange='github_archive',routing_key='*,*',body= line)
-				line = decompressedFile.readLine()
-			#print("writing file on "+dico["outPathFile"])
-			#with open(dico["outPathFile"], 'wb') as outfile:
-			#	line = decompressedFile.readline()
-			#	channel.basic_publish(exchange='github_archive',
-                      	#				routing_key='*',
-                      	#				body= line)	
-				#outfile.write(line)
-				#exit
-
-workingList = init()
-importer(workingList)
+			try:
+				compressedFile = uploadFile(dico["url"])
+				uncompressedFile = decompressedFile(compressedFile)
+				prossessing(channel, uncompressedFile)
+			except Exception as e:
+				print(e)

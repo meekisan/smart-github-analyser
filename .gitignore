@@ -90,5 +90,14 @@ ENV/
 .ropeproject
 #vim swp
 *.swp
-#neo4j
-database/*
+#storage all databases
+recommandation/data/*
+dbs/mongo/*
+dbs/esdata1/*
+dbs/neo4j/*
+#prediction data
+prediction/data/*
+# atome 
+__pycache__
+# share volume
+share/*
