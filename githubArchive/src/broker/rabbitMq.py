@@ -21,5 +21,19 @@ class RabbitMq(AbstractBroker):
         except Exception as e:
             print(e)
 
-    def consumer(self):
-        print("RabbitMq cosumer")
+    def callback(self, channel, method, property, body):
+        
+        print(" [x] %r" % body)
+
+
+
+    def consume(self, queue):
+        print("RabbitMq consumer")
+        self.channel.basic_consume(self.callback, queue, no_ack=True)
+        try:
+            self.channel.start_consuming()
+        except KeyboardInterrupt:
+            self.channel.stop_consuming()
+
+    def close(self):
+        self.connect.close()

@@ -24,5 +24,6 @@ def main():
     importer.setCallURL()
     importer.work()
     logger.info("End githubImporter")
+    
 if __name__ == "__main__":
     main()
