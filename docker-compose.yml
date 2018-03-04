@@ -10,7 +10,7 @@ services:
       - 27017:27017
     volumes:
       - ./share:/tmp/share
-      - ./dbs/mongo/db:/data/db
+      - mongodata:/data/db
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -50,3 +50,5 @@ services:
     volumes:
       - ./prediction/data:/home/jovyan/data
     tty: true
+volumes:
+  mongodata:
