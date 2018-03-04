@@ -45,6 +45,7 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
+      - ./share:/tmp/share
       - ./dbs/neo4j/data:/data
       - ./dbs/neo4j/plugins:/plugins
     tty: true
