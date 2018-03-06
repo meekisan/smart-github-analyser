@@ -1,6 +1,8 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+from broker.backend.mongoBackend import MongoBackend
 from broker.rabbitMq import RabbitMq
 from logger.logger import logger
+
 import argparse
 from conf import conf
 
@@ -15,8 +17,9 @@ def checkParams():
 
 def main():
     logger.info("Run consumer")
-    broker = RabbitMq(conf["rabbitMq"]["host"])
-    broker.consume("archives")
+    broker = RabbitMq(conf["broker"])
+    broker.setBackend(MongoBackend(conf["backend"]))
+    broker.consume()
     logger.info("End consumer")
 
 if __name__ == "__main__":

@@ -6,6 +6,12 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./githubArchive/src:/data
+  consume-broker:
+    build:
+      context: githubArchive/
+      dockerfile: DockerfileConsumer
+    volumes:
+      - ./githubArchive/src:/data
   datastorage:
     image: mongo
     ports:
