@@ -6,5 +6,4 @@ argparse
 datetime
 timedelta
 calendar
-import pika
-
+pika

@@ -4,12 +4,17 @@ services:
     build:
       context: githubArchive/
       dockerfile: Dockerfile
+    volumes:
+      - ./githubArchive/src:/data
   datastorage:
     image: mongo
     ports:
       - 27017:27017
+      - 27018:27018
+      - 27019:27019
     volumes:
-      - ./dbs/mongo/db:/data/db
+      - ./share:/tmp/share
+      - mongodata:/data/db
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -17,6 +22,10 @@ services:
     volumes:
       - ./rabbitManagement/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
       - ./rabbitManagement/definitions.json:/etc/rabbitmq/definitions.json:ro
+  listener-rabbitmq:
+    build:
+      context: githubArchive
+      dockerfile: Dockerfile
   search:
     image: elasticsearch
     ports:
@@ -36,6 +45,7 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
+      - ./share:/tmp/share
       - ./dbs/neo4j/data:/data
       - ./dbs/neo4j/plugins:/plugins
     tty: true
@@ -49,3 +59,5 @@ services:
     volumes:
       - ./prediction/data:/home/jovyan/data
     tty: true
+volumes:
+  mongodata:
