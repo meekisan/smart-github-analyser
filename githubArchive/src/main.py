@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 from githubImporter import GithubImporter
 from broker.rabbitMq import RabbitMq
 from logger.logger import logger
@@ -20,10 +20,10 @@ def main():
     logger.info("Run githubImporter")
     args = checkParams()
     importer = GithubImporter(args.url, args.dateFormat, args.dest)
-    importer.setStrategy(RabbitMq(conf["rabbitMq"]["host"]))
+    importer.setBroker(RabbitMq(conf["broker"]))
     importer.setCallURL()
     importer.work()
     logger.info("End githubImporter")
-    
+
 if __name__ == "__main__":
     main()

@@ -21,20 +21,20 @@ class GithubImporter:
         self.dest = dest
         self.params.append(self.setCallURL())
 
-    def setStrategy(self, strategy):
-        self.strategy = strategy
+    def setBroker(self, broker):
+        self.broker = broker
 
     def pathBuilder(self, outFilePath):
         try:
             os.makedirs(outFilePath, exist_ok=True)
-        except Exception as e:
-            print(e)
+        except OSError as err:
+            logger.error(err)
 
     def uploadFile(self, url):
         try:
             self.sourceUrl =  urllib.request.urlopen(url)
-        except Exception as e:
-            print(e)
+        except IOError as err:
+            logger.error(err)
 
     def decompressedFile(self):
         try:
@@ -42,9 +42,8 @@ class GithubImporter:
             compressedFile.write(self.sourceUrl.read())
             compressedFile.seek(0)
             self.uncompressedFile = gzip.GzipFile(fileobj=compressedFile, mode='rb')
-        except Exception as e:
-            loggger.error(e)
-            print(e)
+        except BlockingIOError as err:
+            logger.error(err, err.args)
 
     def prossessing(self):
         line = str(self.uncompressedFile.readline(),'utf-8')
@@ -52,10 +51,9 @@ class GithubImporter:
             jsonline = json.loads(line)
             if jsonline['repo']['name'] in repo_name:
                 try:
-                    self.strategy.publish(conf["rabbitMq"]["exchange"], conf["rabbitMq"]["routing_key"], line)
-                except Exception as e:
-                    loggger.error(e)
-                    print(e)
+                    self.broker.publish(line)
+                except Exception as err:
+                    logger.error(err)
             line = str(self.uncompressedFile.readline(),'utf-8')
 
     def work(self):
@@ -64,9 +62,10 @@ class GithubImporter:
                 self.uploadFile(elt["url"])
                 self.decompressedFile()
                 self.prossessing()
-            except Exception as e:                
-                loggger.error(e)
-                print(e)
+            except Exception as err:
+                self.broker.close()
+                logger.error(err)
+        self.broker.close()
 
     def setCallURL(self):
         listDate = {}
