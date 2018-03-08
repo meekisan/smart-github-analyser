@@ -12,15 +12,29 @@ services:
       dockerfile: DockerfileConsumer
     volumes:
       - ./githubArchive/src:/data
-  datastorage:
-    image: mongo
-    ports:
-      - 27017:27017
-      - 27018:27018
-      - 27019:27019
+  datastorage-primary:
+    build:
+      context: .
+      dockerfile: ./datastorage/Dockerfile
+    expose: [27017,27018,27019]
     volumes:
-      - ./share:/tmp/share
-      - mongodata:/data/db
+      - ./sharePrimary:/tmp/share
+      - mongodataPrimary:/data/db
+  datastorage-secondary:
+    build:
+      context: .
+      dockerfile: ./datastorage/Dockerfile
+    expose: [27017,27018,27019]
+    volumes:
+      - ./shareSecondary:/tmp/share
+      - mongodataSecondary:/data/db
+  datastorage-arbitre:
+    build:
+      context: .
+      dockerfile: ./datastorage/Dockerfile
+    expose: [27017,27018,27019]
+    volumes:
+      - ./shareArbitre:/tmp/share
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -66,4 +80,5 @@ services:
       - ./prediction/data:/home/jovyan/data
     tty: true
 volumes:
-  mongodata:
+  mongodataPrimary:
+  mongodataSecondary:
