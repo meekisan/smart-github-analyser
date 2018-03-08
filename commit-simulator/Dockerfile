@@ -1,4 +1,4 @@
 FROM node
 COPY . /data
 WORKDIR /data
-CMD node commitSimulator.js 
+CMD node commitSimulator.js
