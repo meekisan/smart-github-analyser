@@ -1,5 +1,6 @@
 repo_name=[
-         "OpenSCAP/scap-security-guide",
+    "meekisan/smart-github-analyser",
+    "OpenSCAP/scap-security-guide",
 	"playgameservices/play-games-plugin-for-unity",
 	"ezwelty/cg-data",
 	"TheDimPause/thedimpause.github.io",
