@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./githubArchive/src:/data
-  consume-broker:
+  broker-consumer:
     build:
       context: githubArchive/
       dockerfile: DockerfileConsumer
@@ -18,34 +18,43 @@ services:
       dockerfile: ./datastorage/Dockerfile
     expose: [27017,27018,27019]
     volumes:
-      - ./sharePrimary:/tmp/share
+      - ./datastorage:/tmp/share
       - mongodataPrimary:/data/db
+    command: mongod -smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
   datastorage-secondary:
     build:
       context: .
       dockerfile: ./datastorage/Dockerfile
     expose: [27017,27018,27019]
     volumes:
-      - ./shareSecondary:/tmp/share
+      - ./datastorage:/tmp/share
       - mongodataSecondary:/data/db
+    command: mongod --smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
   datastorage-arbitre:
     build:
       context: .
       dockerfile: ./datastorage/Dockerfile
     expose: [27017,27018,27019]
     volumes:
-      - ./shareArbitre:/tmp/share
+      - ./datastorage:/tmp/share
+      - mongodataSecondary:/data/db
+    command: mongod --smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
+  mongosetup:
+    image: mongo:3.0.6
+    volumes:
+      - ./datastorage:/scripts
+    entrypoint: [ "/scripts/setup.sh" ]
   rabbitmq:
     image: rabbitmq:3-management
+    links:
+      - datastorage-primary
+      - datastorage-secondary
+      - datastorage-arbitre
     ports:
       - 15672:15672
     volumes:
       - ./rabbitManagement/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
       - ./rabbitManagement/definitions.json:/etc/rabbitmq/definitions.json:ro
-  listener-rabbitmq:
-    build:
-      context: githubArchive
-      dockerfile: Dockerfile
   search:
     image: elasticsearch
     ports:
