@@ -1,18 +1,21 @@
 version: "3"
 services:
   githubarchive:
+    container_name: githubarchive
     build:
       context: githubArchive/
       dockerfile: Dockerfile
     volumes:
       - ./githubArchive/src:/data
   broker-consumer:
+    container_name: brokerconsumer
     build:
       context: githubArchive/
       dockerfile: DockerfileConsumer
     volumes:
       - ./githubArchive/src:/data
   datastorage-primary:
+    container_name: mongoprimary
     build:
       context: .
       dockerfile: ./datastorage/Dockerfile
@@ -22,6 +25,7 @@ services:
       - mongodataPrimary:/data/db
     command: mongod -smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
   datastorage-secondary:
+    container_name: mongosecondary
     build:
       context: .
       dockerfile: ./datastorage/Dockerfile
@@ -31,6 +35,7 @@ services:
       - mongodataSecondary:/data/db
     command: mongod --smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
   datastorage-arbitre:
+    container_name: mongoarbitre
     build:
       context: .
       dockerfile: ./datastorage/Dockerfile
@@ -40,11 +45,13 @@ services:
       - mongodataSecondary:/data/db
     command: mongod --smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
   mongosetup:
+    container_name: mongosetup
     image: mongo:3.0.6
     volumes:
       - ./datastorage:/scripts
     entrypoint: [ "/scripts/setup.sh" ]
   rabbitmq:
+    container_name: rabbitmq
     image: rabbitmq:3-management
     links:
       - datastorage-primary
@@ -55,18 +62,22 @@ services:
     volumes:
       - ./rabbitManagement/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
       - ./rabbitManagement/definitions.json:/etc/rabbitmq/definitions.json:ro
-  search:
-    image: elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.2
+    container_name: search
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - 9200:9200
-    volumes:
-      - ./dbs/esdata1:/usr/share/elasticsearch/data
-    tty: true
   kibana:
-    image: kibana
+    image: docker.elastic.co/kibana/kibana-oss:6.2.2
     ports:
       - 5601:5601
-  recommandation:
+    environment:
+      - ELASTICSEARCH_URL=http://search:9200
+    tty: true
+  neo4j:
+    container_name: recommandation
     build:
       context: .
       dockerfile: ./recommandation/Dockerfile
@@ -78,10 +89,11 @@ services:
       - ./dbs/neo4j/data:/data
       - ./dbs/neo4j/plugins:/plugins
     tty: true
-  prediction:
+  jupyter-python-spark:
     build:
       context: .
       dockerfile: ./prediction/Dockerfile
+    container_name: prediction
     ports:
       - 8889:8889
       - 4040:4040
