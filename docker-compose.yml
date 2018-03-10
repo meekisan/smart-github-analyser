@@ -50,6 +50,7 @@ services:
     volumes:
       - ./datastorage:/scripts
     entrypoint: [ "/scripts/setup.sh" ]
+    restart: on-failure:5
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management
