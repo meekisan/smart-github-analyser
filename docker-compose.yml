@@ -7,70 +7,66 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./githubArchive/src:/data
+  commit-simulator:
+    container_name: commit-simulator
+    build:
+      context: commit-simulator
+      dockerfile: Dockerfile
+    tty: true
+    environment:
+      multiplier: 1
+  git-api:
+    container_name: github-api
+    build:
+      context: ./git-api
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    environment:
+      FLASK_APP: server.py
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
+    volumes:
+      - ./git-api/src:/data
+    tty: true
   broker-consumer:
-    container_name: brokerconsumer
+    container_name: broker-consumer
     build:
       context: githubArchive/
       dockerfile: DockerfileConsumer
     volumes:
       - ./githubArchive/src:/data
-  datastorage-primary:
-    container_name: mongoprimary
+    restart: always
+  datastorage:
+    container_name: datastorage
     build:
       context: .
       dockerfile: ./datastorage/Dockerfile
-    expose: [27017,27018,27019]
+    ports:
+      - 27017:27017
+      - 27018:27018
+      - 27019:27019
     volumes:
-      - ./datastorage:/tmp/share
-      - mongodataPrimary:/data/db
-    command: mongod -smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
-  datastorage-secondary:
-    container_name: mongosecondary
-    build:
-      context: .
-      dockerfile: ./datastorage/Dockerfile
-    expose: [27017,27018,27019]
-    volumes:
-      - ./datastorage:/tmp/share
-      - mongodataSecondary:/data/db
-    command: mongod --smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
-  datastorage-arbitre:
-    container_name: mongoarbitre
-    build:
-      context: .
-      dockerfile: ./datastorage/Dockerfile
-    expose: [27017,27018,27019]
-    volumes:
-      - ./datastorage:/tmp/share
-      - mongodataSecondary:/data/db
-    command: mongod --smallfiles --bind_ip 0.0.0.0 --replSet rsProjet --dbpath /data/dbRsProjet --storageEngine "mmapv1"
-  mongosetup:
-    container_name: mongosetup
-    image: mongo:3.0.6
-    volumes:
-      - ./datastorage:/scripts
-    entrypoint: [ "/scripts/setup.sh" ]
-    restart: on-failure:5
+      - ./datastorage/share:/tmp/share
+      - mongo-storage:/data/db
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management
-    links:
-      - datastorage-primary
-      - datastorage-secondary
-      - datastorage-arbitre
     ports:
       - 15672:15672
     volumes:
       - ./rabbitManagement/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
       - ./rabbitManagement/definitions.json:/etc/rabbitmq/definitions.json:ro
+
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.2
     container_name: search
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.2
     environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTIONS=-Xms1g -Xmx1g"
     ports:
       - 9200:9200
   kibana:
+    container_name: kibana
     image: docker.elastic.co/kibana/kibana-oss:6.2.2
     ports:
       - 5601:5601
@@ -82,15 +78,18 @@ services:
     build:
       context: .
       dockerfile: ./recommandation/Dockerfile
+    environment:
+      - NEO4J_AUTH=none
     ports:
       - 7474:7474
       - 7687:7687
     volumes:
       - ./share:/tmp/share
       - ./dbs/neo4j/data:/data
-      - ./dbs/neo4j/plugins:/plugins
+      - ./recommandation/plugins:/var/lib/neo4j/plugins
     tty: true
   jupyter-python-spark:
+    container_name: jupyter
     build:
       context: .
       dockerfile: ./prediction/Dockerfile
@@ -102,5 +101,4 @@ services:
       - ./prediction/data:/home/jovyan/data
     tty: true
 volumes:
-  mongodataPrimary:
-  mongodataSecondary:
+  mongo-storage:
