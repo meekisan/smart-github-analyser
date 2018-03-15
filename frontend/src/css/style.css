@@ -1,0 +1,146 @@
+html {
+ height:100%;
+}
+table {
+ width:800px;
+ }
+table, tr, td {
+  vertical-align: top;
+  }
+
+a:link, a:visited {
+text-decoration:none;
+color:#003366;
+font-weight:bold;
+padding:10px;
+border:1px solid #003366;
+ }
+a:hover {
+ color : #fff;
+ padding:10px;
+ background-color : #003366;
+ }
+ .none:link, .none:visited {border:0px;padding:0px; }
+ .none:hover {text-decoration:none; }
+hr {
+ background-color : #003366;
+ size:1px;
+ }
+h1 {
+color:#003366;
+border-bottom:0px solid #003366;
+font-size:12px;
+}
+body,td {
+ font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+ font-size : 12px;
+ color : #003366;
+ height:100%;
+ }
+select,input,textarea {
+ font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+ font-size : 11px;
+ color : #fff;
+ background-color : #003366;
+ width:500px;
+ border:0px solid #ff6600;
+ }
+.trClass {
+ color : #ffffff;
+ background-color : #242424;
+ text-align:left;
+ font-weight:bold;
+ padding-left:5px;
+ height:20px;
+ }
+.button {
+  color:#fff;
+  background-color : #003366;
+  border:0px solid #a4d1ff;
+  cursor:pointer;
+  text-align:center;
+  font-weight:bold;
+  }
+.Liste:link, .Liste:visited {
+  text-decoration:none;
+  color:#003366;
+  font-weight:normal;
+  border:0px;
+  padding:0px;
+  }
+.Liste:hover {
+ color:#fff;
+ }
+.ListeContact {
+ width:1450px;
+ }
+dl {
+  color:#fff;
+  background-color:#003366;
+  height:100%;
+  }
+ dd {
+  position:relative;
+  left:-37px;
+  width:197px;
+  height:30px;
+  }
+ dd a:link,dd a:visited,dd a:hover {
+  border:0px;
+  color:#fff;
+  text-align:center;
+  }
+ dd:hover {
+  border:0px;
+  text-align:center;
+  background-color:#ff6600;
+  }
+ dd a:hover {
+  background-color:#ff6600;
+  text-align:center;
+  }
+  #info {
+   display:none;
+   cursor:pointer;
+   width:100%;
+   border:1px solid #ff0000;
+   color:#ff0000;
+  }
+  #newFonction {
+   display:none;
+   background-color:#ff0000;
+   color:#000000;
+   }
+  .showLine:hover {
+    background-color:#ff6600;
+    color:#fff;
+   }
+.showLine2:hover {
+    background-color:#b5b5b5;
+    color:#fff;
+   }
+.hiddenDiv {
+ position : absolute;
+ top:145px;
+ left:5px;
+ visibility : hidden;
+ height : 100px;
+ width:80%;
+ border : 1px solid black;
+ background-color : white;
+ overflow : auto;
+ z-index:99;
+}
+.currentDiv {
+ z-index:99;
+ width : auto;
+ height : 20px;
+ border-bottom : 1px solid black;
+ padding : 5px;
+ background-color : #ff9933;
+ cursor : pointer;
+ overflow : hidden;
+}
+.currentDiv:hover {
+ background-color : #ffffff;
+ }
