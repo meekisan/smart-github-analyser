@@ -94,6 +94,7 @@ ENV/
 
 #storage all databases
 recommandation/data/*
+datastorage/share/*
 dbs/mongo/*
 dbs/esdata1/*
 dbs/neo4j/*
@@ -103,3 +104,8 @@ prediction/data/*
 
 # share volume
 share/*
+
+#module npm
+commit-simulator/node_modules/*
+
+git-api/src/activity.log.1
