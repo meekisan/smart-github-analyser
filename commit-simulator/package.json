@@ -1,16 +1,21 @@
 {
-  "name": "Commit-simulator",
-  "version": "0.0.1",
-  "description": "Simulate commit on readme file for N fake repo",
+  "name": "commit-simulator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "commitGenerator.js",
   "scripts": {
     "start-dev": "pm2 start commitSimulator.js --watch --no-daemon --name='Commit-simulator'",
     "start": "pm2 start commitSimulator.js -i4 --name='Commit-simulator'",
-    "stop": "pm2 stop Commit-simulator"    
+    "stop": "pm2 stop Commit-simulator"
   },
-  "author": "Alexandre Blukacz<alexandre.blukacz@gmail.com>",
-  "license": "ISC",
   "dependencies": {
-    "got": "^8.3.0",
-
-  }
+    "got": "^8.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

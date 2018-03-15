@@ -64,7 +64,6 @@ services:
     volumes:
       - ./rabbitManagement/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
       - ./rabbitManagement/definitions.json:/etc/rabbitmq/definitions.json:ro
-
   elasticsearch:
     container_name: search
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.2
@@ -107,5 +106,5 @@ services:
     volumes:
       - ./prediction/data:/home/jovyan/data
     tty: true
-volumes:
+  volumes:
   mongo-storage:
