@@ -106,5 +106,5 @@ services:
     volumes:
       - ./prediction/data:/home/jovyan/data
     tty: true
-  volumes:
+volumes:
   mongo-storage:
