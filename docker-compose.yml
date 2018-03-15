@@ -29,6 +29,13 @@ services:
     volumes:
       - ./git-api/src:/data
     tty: true
+  frontend:
+    container_name: front
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 81:80
   broker-consumer:
     container_name: broker-consumer
     build:
