@@ -2,7 +2,8 @@ FROM ubuntu
 USER root
 COPY ./src /data
 WORKDIR /data
-RUN apt-get update && apt-get install python3-pip -y
-RUN pip3 install pika pymongo
-RUN chmod +x /data/consumer.py
-CMD /usr/bin/python3 /data/consumer.py
+RUN apt-get update && apt-get install -y python3-pip supervisor -y
+RUN pip3 install pika pymongo requests
+RUN mkdir -p /var/log/supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord"]

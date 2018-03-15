@@ -53,7 +53,7 @@
       "arguments": {}
     },
     {
-      "name": "files",
+      "name": "search",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
@@ -64,7 +64,7 @@
     {
       "name": "simulator",
       "vhost": "/",
-      "type": "topic",
+      "type": "fanout",
       "durable": true,
       "auto_delete": false,
       "internal": false,
@@ -73,7 +73,7 @@
     {
       "name": "github_archive",
       "vhost": "/",
-      "type": "topic",
+      "type": "fanout",
       "durable": true,
       "auto_delete": false,
       "internal": false,
@@ -86,7 +86,15 @@
       "vhost": "/",
       "destination": "archives",
       "destination_type": "queue",
-      "routing_key": "*.*",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "github_archive",
+      "vhost": "/",
+      "destination": "search",
+      "destination_type": "queue",
+      "routing_key": "",
       "arguments": {}
     },
     {
@@ -94,15 +102,15 @@
       "vhost": "/",
       "destination": "commits",
       "destination_type": "queue",
-      "routing_key": "commit.*",
+      "routing_key": "",
       "arguments": {}
     },
     {
       "source": "simulator",
       "vhost": "/",
-      "destination": "files",
+      "destination": "search",
       "destination_type": "queue",
-      "routing_key": "file.*",
+      "routing_key": "",
       "arguments": {}
     }
   ]
