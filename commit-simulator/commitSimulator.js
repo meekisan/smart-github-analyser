@@ -15,7 +15,7 @@ const repeat = () => {
       console.log("Unable to join",url);
     }
     repeat();
-  },10000);
+  },100000);
 };
 
 let multiplierEnv = process.env.multiplier;

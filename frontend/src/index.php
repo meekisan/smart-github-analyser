@@ -43,7 +43,6 @@ $star               = 0;
 //actions liées au POST
 if ($_POST) {
   $action = (isset($_POST['action'])) ? ((preg_replace('[^0-9]','',$_POST['action']) > 0) ? preg_replace('[^0-9]','',$_POST['action']) : 0) : 0;
-  echo $action;
   if ($action==1) include("form_search_posted.php");
   elseif($action==2) include("form_reco_posted.php");
   }
@@ -74,7 +73,7 @@ foreach ($result->getRecords() as $record) {
 
     //$optionUsers.='<input type="radio" name="nameUser" value="'.$lelogin.'" style="width:10px;"'.$selected.' /><label style="margin-right:30px;">'.$lename.'</label> ';
   }
-  echo 'Les relations des repo sont <=> '.$laRelation.'<hr>';
+  //echo 'Les relations des repo sont <=> '.$laRelation.'<hr>';
 //  MATCH (u:User{login:"Gracianne"})-[:LIKE|:WORK|:FOLLOW|:OWN]->(r:Repo) RETURN DISTINCT r.name
 
 
@@ -96,7 +95,7 @@ foreach ($result->getRecords() as $record) {
     $autresLangues[$lename]= $lasize;
   }
 //trier le tableau $autresLangues par ordre alphabétique
-@ksort($autresLangues);
+/*@ksort($autresLangues);
 foreach ($autresLangues as $key => $val) {
     $optionLanguesAutre.= '<option value="'.$key.'">'.$key.' ('.number_format($val,0, ',', '.').' files)</option>';
 }
@@ -106,7 +105,7 @@ for ($i = 1; $i <= $nbStar; $i++) {
   $selected = ($i==$star) ? ' selected="selected"' : '';
   $txt = ($i ==1) ? 'Peu : moins de 10' : (($i ==2) ? 'Intermédiaire : entre 11 et 10.000' : (($i ==3) ? 'Populaire : Plus de 10.000' : 'OUPS $star max est 3'));
   $optionStar.='<option value="'.$i.'"'.$selected.' />'.$txt.'</option>';
-}
+}*/
 
 /**
 SUPER POUR TROUVER LES USER QUI TRAVAIL SUR LES MEMES LANGUAGES
@@ -154,7 +153,7 @@ $menuForm = '<form action="'.$urlPage.'" method="post" name="F1" style="border:1
     </tr>
     <tr>
       <td colspan="2">&nbsp;</td>
-      <td><input name="ok" value="Vas chercher toto" type="button" onclick="verifUpload1(F1)" class="button" /></td>
+      <td><input name="ok" value="recommandation" type="button" onclick="verifUpload1(F1)" class="button" /></td>
     </tr>
   </table>
 </form>';
@@ -229,7 +228,6 @@ echo '<!doctype html><html itemscope="" itemtype="http://schema.org/WebPage" lan
 <body>
   <h1>Moteur de Recommandation</h1>
   '.$menuForm.'
-  '.$menuForm2.'
   '.$returnForm.'
 </body>
 </html>';
