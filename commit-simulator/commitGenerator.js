@@ -23,22 +23,21 @@ CommitGenerator.prototype.generator= function () {
     var repo = this.repositories[this.randomIntBetween1And(5)];
     var user = this.users[this.randomIntBetween1And(6)];
     var date = new Date();
+    console.log("generator");
     var template = require('./commitTemplate.js');
-    for(elmt in user){
-      template = template.replace(new RegExp(elmt, 'g'), user[elmt]);
-    }
-    for(elmt in repo){
-      template = template.replace(new RegExp(elmt, 'g'), repo[elmt]);
-    }
-    //user_url_commit
-    //template = template.replace(new RegExp(elmt, 'g'), repo['']);
-    //created_ts",
-    template = template.replace(new RegExp('created_ts', 'g'),  date.getTime());
-    //"updated_at": "update_datetime",
-    template = template.replace(new RegExp('update_datetime', 'g'), date.toString());
-    //"pushed_at": "push_login"
-    template = template.replace(new RegExp('pushed_at', 'g'), date.getTime+this.randomIntBetween1And(500));
-
+    // actor
+    template['actor']['id'] = user['user_id'];
+    template['actor']['login'] = user['user_login'];
+    template['actor']['display_login'] = user['user_login'];
+    //repo
+    template['repo']['id'] = repo['repo_id'];
+    template['repo']['name'] = repo['repo_name'];
+    template['repo']['url'] = repo['repo_url'];
+    //payload
+    template['payload']['commits'][0]['author']['name'] = user['user_name'];
+    template['payload']['commits'][0]['author']['email'] = user['user_email'];
+    //created_at
+    template['created_at'] = date.toISOString();
     this.commit = template;
 }
 

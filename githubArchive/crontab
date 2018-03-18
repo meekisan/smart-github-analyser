@@ -1,1 +1,1 @@
-* 1 * * * root /data/main.py >> /var/log/cron.log 2>&1
+* 1 * * * root /usr/bin/python3 /data/main.py >> /var/log/cron.log 2>&1

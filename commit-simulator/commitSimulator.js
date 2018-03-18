@@ -8,13 +8,14 @@ const repeat = () => {
     c.generator()
     console.log(c.commit);
     try{
-			let response = await got.post(url,{body:c.commit});
+      headers = {'accept': 'application/json','content-type': 'application/json',}
+			let response = await got.post(url,{json: !true, body: JSON.stringify(c.commit)});
       console.log("Successfully joined",url);
     }catch(error){
       console.log("Unable to join",url);
     }
     repeat();
-  },1000);
+  },10000);
 };
 
 let multiplierEnv = process.env.multiplier;

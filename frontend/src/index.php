@@ -27,7 +27,7 @@ require_once 'vendor/autoload.php';
 use GraphAware\Neo4j\Client\ClientBuilder;
 //connexion à neo4j
 $client = ClientBuilder::create()
-    ->addConnection('default', 'http://neo4j:rabbit8497@recommandation:7474')
+    ->addConnection('default', 'http://neo4j:neo@recommandation:7474')
     ->build();
 
 //action liées au post
@@ -43,7 +43,7 @@ $star               = 0;
 //actions liées au POST
 if ($_POST) {
   $action = (isset($_POST['action'])) ? ((preg_replace('[^0-9]','',$_POST['action']) > 0) ? preg_replace('[^0-9]','',$_POST['action']) : 0) : 0;
-
+  echo $action;
   if ($action==1) include("form_search_posted.php");
   elseif($action==2) include("form_reco_posted.php");
   }
@@ -53,7 +53,7 @@ if ($_POST) {
 
 
 //query pour obtenir les users
-$query = 'MATCH (n:User) WHERE n.name <> "papy" RETURN n.name as name, n.login as login';
+/*$query = 'MATCH (n:User) WHERE n.name <> "papy" RETURN n.name as name, n.login as login';
 $result = $client->run($query);
 foreach ($result->getRecords() as $record) {
     $lename  = sprintf($record->value('name'));
@@ -61,6 +61,7 @@ foreach ($result->getRecords() as $record) {
     $selected = ($lelogin==$user) ? ' checked="checked"' : '';
     $optionUsers.='<input type="radio" name="nameUser" value="'.$lelogin.'" style="width:10px;"'.$selected.' /><label style="margin-right:30px;">'.$lename.'</label> ';
   }
+  */
 //AFFICHER LES RELATIONS POSSIBLES
 //query pour obtenir les users
 $query = 'MATCH (n:Repo)-[r]-(m) RETURN DISTINCT type(r) AS laRelation;';
@@ -95,10 +96,10 @@ foreach ($result->getRecords() as $record) {
     $autresLangues[$lename]= $lasize;
   }
 //trier le tableau $autresLangues par ordre alphabétique
-ksort($autresLangues);
+@ksort($autresLangues);
 foreach ($autresLangues as $key => $val) {
     $optionLanguesAutre.= '<option value="'.$key.'">'.$key.' ('.number_format($val,0, ',', '.').' files)</option>';
-  }
+}
 
 //POUR LES STARS
 for ($i = 1; $i <= $nbStar; $i++) {
@@ -126,35 +127,29 @@ $menuForm = '<form action="'.$urlPage.'" method="post" name="F1" style="border:1
      <td>Recommandation pour<sup style="color:red">*</sup></td>
      <td>:</td>
      <td>
-        '.$optionUsers.'
+        <input type="text" name="worker_login"><br>
       </td>
    </tr>
    <tr>
-     <td>Projet contenant<sup style="color:red">*</sup></td>
+     <td>Recommandation type<sup style="color:red">*</sup></td>
      <td>:</td>
-     <td><input type="text" name="nameSearch" value="'.$search.'" onclick="nettoyer(this.name,this.value)" /></td>
-   </tr>
+     <td><select id="type" name="type">
+          <option value="WORK">Work</option>
+          <option value="STAR">Star</option>
+         </select></td>
+     </tr>
    <tr>
      <td>Star</td>
      <td>:</td>
      <td>
-       <select name="nameStar">
-        <option value="0">Sélectionnez un niveau de star (option)</option>
-        '.$optionStar.'
-       </select>
+      <input type="text" name="star"><br>
      </td>
    </tr>
    <tr>
      <td>Langues</td>
      <td>:</td>
      <td>
-     <select name="nameLangue[]" id="nameLangue" size="'.$sizeLangue.'" onchange="heightPlus(this.id,this.value)" multiple>
-      <option value="">Sélectionnez une ou plusieurs langues (option)</option>
-      <optgroup label="Top 50 par ordre décroissant depuis neo4j">
-      '.$optionLangues.'
-      </optgroup>
-      <optgroup label="Toutes les Langues par ordre alphabétique">'.$optionLanguesAutre.'</optgroup>
-     </select>
+     <input type="text" name="language"><br>
      </td>
     </tr>
     <tr>
@@ -172,7 +167,7 @@ $menuForm2 = '<form action="'.$urlPage.'" method="post" name="F2" style="border:
      <td>Recommandation pour<sup style="color:red">*</sup></td>
      <td>:</td>
      <td>
-        '.$optionUsers.'
+        <input type="text" name="worker_login"><br>
       </td>
    </tr>
    <tr>
@@ -198,8 +193,8 @@ echo '<!doctype html><html itemscope="" itemtype="http://schema.org/WebPage" lan
  function verifUpload1() {
    var clic=0;
    var message="";
-   var vall = document.F1.nameSearch.value;
-   if (vall == "") message+="Merci de saisir au moins 1 caractère.\n";
+   var vall = document.F1.worker_login.value;
+   if (vall == "") message+="Merci de saisir votre login.\n";
    else if (vall == "'.$searchDefault.'") message+="Merci de saisir au moins 1 caractère.\n";
    if (message != "") alert(message);
    else {
@@ -211,7 +206,7 @@ echo '<!doctype html><html itemscope="" itemtype="http://schema.org/WebPage" lan
  function verifUpload2 (F2) {
    var clic=0;
    var message="";
-   //var vall = document.F2.getElementById("nameUser").checked;
+   //var vall = document.F2.getElementById("worker_login").checked;
    //if (vall == "false") message+="Merci de sélectionner un user.\n";
    if (message != "") alert(message);
    else {
