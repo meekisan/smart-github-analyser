@@ -1,17 +1,16 @@
 from .abstractBackend import AbstractBackend
 from logger.logger import logger
 import requests
-import time
 import sys
 
 
 class ElasticBackend(AbstractBackend):
     def __init__(self, conf):
         self.url = conf['url']
-        self.connect();
 
     def connect(self):
-        time.sleep(20)
+        pass
+
 
     def insert_one(self, data):
         try:
