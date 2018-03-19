@@ -50,7 +50,7 @@ services:
       context: githubArchive/
       dockerfile: DockerfileConsumer
     volumes:
-      - ./githubArchive/src:/data
+      - ./src:/data
   datastorage:
     container_name: datastorage
     build:
