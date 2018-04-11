@@ -3,8 +3,8 @@ services:
   githubarchive:
     container_name: githubarchive
     build:
-      context: githubArchive/
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: githubArchive/Dockerfile
     volumes:
       - ./src:/data
   commit-simulator:
@@ -18,8 +18,8 @@ services:
   git-api:
     container_name: github-api
     build:
-      context: ./git-api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: git-api/Dockerfile
     ports:
       - 80:80
     environment:
@@ -47,8 +47,8 @@ services:
   broker-consumer:
     container_name: broker-consumer
     build:
-      context: githubArchive/
-      dockerfile: DockerfileConsumer
+      context: .
+      dockerfile: githubArchive/DockerfileConsumer
     volumes:
       - ./src:/data
   datastorage:

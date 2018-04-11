@@ -1,6 +1,6 @@
 import os
 import io
-import urllib.request
+from urllib.request import Request, urlopen
 import gzip
 import json
 from datetime import datetime
@@ -32,7 +32,7 @@ class GithubImporter:
 
     def uploadFile(self, url):
         try:
-            self.sourceUrl =  urllib.request.urlopen(url)
+            self.sourceUrl =  urlopen(Request(url, headers={'User-Agent': 'Mozilla/5.0'}))
         except IOError as err:
             logger.error(err)
 
